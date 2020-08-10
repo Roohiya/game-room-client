@@ -1,6 +1,6 @@
 const common = require('./webpack.common.js')
 const webpack = require('webpack')
-const merge = require('webpack-merge')
+const { merge } = require('webpack-merge')
 
 const config = {
     devtool: 'eval',
@@ -11,7 +11,7 @@ const config = {
       new webpack.NamedModulesPlugin()
     ]
   }
-  
+
   // format name of bundle file without chunkhash for dev and uat
   config.output.sourceMapFilename = 'assets/js/[name].map'
 
@@ -30,7 +30,7 @@ config.devServer = {
         index: 'index.html'
     }
 }
-  
+
 // ==========
 // CSS LOADER
 // ==========

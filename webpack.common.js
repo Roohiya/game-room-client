@@ -1,9 +1,8 @@
 const webpack = require('webpack')
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const CopyPlugin = require('copy-webpack-plugin')
 if (!global._babelPolyfill) {
-	require('babel-polyfill')
+  require('babel-polyfill')
 }
 
 // create 'absolute' paths for dist, src and data files
@@ -27,10 +26,10 @@ const config = {
     // auto resolves these extensions, allows for leaving off ext when importing
     extensions: ['.js', '.jsx'],
     // what directories to be searched when resolving modules
-    modules: [pathSrc(), pathData(), 'node_modules']
+    modules: [pathSrc(), pathData(), 'node_modules'],
   },
-  module: {rules: []},
-  plugins: []
+  module: { rules: [] },
+  plugins: [],
 }
 
 // ==========
@@ -40,7 +39,7 @@ const config = {
 config.output = {
   // the absolute path
   path: pathBuild(),
-  filename: 'bundle.js'
+  filename: 'bundle.js',
 }
 
 // ==========
@@ -50,7 +49,7 @@ config.output = {
 config.module.rules.push({
   test: /\.jsx?$/,
   exclude: /(node_modules|bower_components)/,
-  use: ['babel-loader']
+  use: ['babel-loader'],
 })
 
 // ==========
@@ -61,7 +60,7 @@ config.module.rules.push({
   loader: 'file-loader',
   options: {
     name: 'assets/imgs/[name].[ext]',
-  }
+  },
 })
 
 // ==========
@@ -73,47 +72,43 @@ config.module.rules.push({
     {
       loader: `url-loader?limit=100000`,
       options: {
-        name: '[path][name].[ext]'
-      }
-    }
-  ]
+        name: '[path][name].[ext]',
+      },
+    },
+  ],
 })
 
 // ==========
 // SUPPORT CSS
 // ==========
-config.module.rules.push(
-  {
-    test: /\.css$/,
-    include: /node_modules/,
-    use: ['style-loader', 'css-loader']
-  }
-)
+config.module.rules.push({
+  test: /\.css$/,
+  include: /node_modules/,
+  use: ['style-loader', 'css-loader'],
+})
 
 // create global constants which can be configured at compile time
-config.plugins.push(new webpack.DefinePlugin({
-  'process.env': {
-    'NODE_ENV': '"' + process.env.NODE_ENV + '"',
-    'PUBLIC_PATH': JSON.stringify("")
-  }
-}))
+config.plugins.push(
+  new webpack.DefinePlugin({
+    'process.env': {
+      NODE_ENV: '"' + process.env.NODE_ENV + '"',
+      PUBLIC_PATH: JSON.stringify(''),
+    },
+  })
+)
 
 // ==========
 // COPY HTML ENTRY FILE
 // ==========
-config.plugins.push(new HtmlWebpackPlugin({
-  template: pathSrc('index.html'),
-  title: 'Game room',
-  appMountId: 'app'
-}))
-
-// config.plugins.push(new CopyPlugin({
-//   patterns: [
-//     { from: '/dist', to: '../server/public' }
-//   ]
-// }))
+config.plugins.push(
+  new HtmlWebpackPlugin({
+    template: pathSrc('index.html'),
+    title: 'Game room',
+    appMountId: 'app',
+  })
+)
 
 module.exports = {
   config,
-  jsEntry
+  jsEntry,
 }

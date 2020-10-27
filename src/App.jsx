@@ -1,38 +1,101 @@
-import React, { useState, useEffect } from 'react'
-import socketIOClient from 'socket.io-client'
-const ENDPOINT = 'http://127.0.0.1:4242'
+import React, { useEffect, useState } from 'react'
+import Grid from './components/ticTacToeGrid/grid'
+import {
+  Title,
+  Status,
+  Overlay,
+  GameInput,
+  GameDetails,
+  CreateGame,
+  CreateGameLabel,
+  CreateGameDetails,
+  JoinGame,
+  JoinGameLabel,
+  JoinGameDetails,
+  OverlayInput,
+  StartGame,
+  GameRoodID,
+} from './assets/styles'
+import socket from './webSocket/socket'
 
-function App () {
-  const [response, setResponse] = useState('')
+const App = () => {
+  const [visibility, setVisibility] = useState(true)
+  const [playerOneName, setPlayerOneName] = useState('')
+  const [playerTwoName, setPlayerTwoName] = useState('')
+  const [room, createGameRoom] = useState('')
 
   useEffect(() => {
-    const socket = socketIOClient(ENDPOINT)
-    socket.on('FromAPI', data => {
-      setResponse(data)
-    })
+    if (room) initiateSocket(room)
+
+    socket.connectSocket()
   }, [])
 
   return (
-    <p>
-      It's <time dateTime={response}>{response}</time>
-    </p>
-  )
+    <div
+      style={{
+        backgroundColor: 'red',
+        maxWidth: '500px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        margin: 'auto',
+      }}
+    >
+      <Title> Tic Tac Toe </Title>
+      <Grid />
+      <Status>
+        Hello {playerOneName}! Waiting for another player to join the room...
+      </Status>
+      {visibility && (
+        <Overlay>
+          <GameInput>
+            <GameDetails>
+              <CreateGame>
+                <CreateGameDetails>
+                  <CreateGameLabel> Start a new Game! </CreateGameLabel>
+                  <p>Name: </p>
+                  <OverlayInput
+                    onInput={(e) => setPlayerOneName(e.target.value)}
+                  />
+                  <StartGame
+                    onClick={() => {
+                      socket.createGame(playerOneName)
 
-  // return (
-  //   <div>
-  //     <h1>
-  //       Hello, world! This is my app!
-  //     </h1>
-  //     <canvas
-  //       useref='canvas'
-  //       width={640}
-  //       height={425}
-  //       style={{ border: '1px solid black' }}
-  //       onClick={e => {
-  //         console.log(e.clientX)
-  //       }}
-  //     />
-  //   </div>
-  // )
+                      setVisibility(false)
+                    }}
+                  >
+                    Start Game
+                  </StartGame>
+                </CreateGameDetails>
+              </CreateGame>
+              <JoinGame>
+                <JoinGameDetails>
+                  <JoinGameLabel> Join a Game!</JoinGameLabel>
+                  <p>Name: </p>
+                  <OverlayInput
+                    onInput={(e) => setPlayerOneName(e.target.value)}
+                  />
+                  <p>Room ID: </p>
+                  <OverlayInput
+                    onInput={(e) => setPlayerOneName(e.target.value)}
+                  />
+                </JoinGameDetails>
+                <StartGame
+                  onClick={() => {
+                    socket.createGame(playerOneName)
+
+                    setVisibility(false)
+                  }}
+                >
+                  Join Game
+                </StartGame>
+              </JoinGame>
+            </GameDetails>
+          </GameInput>
+        </Overlay>
+      )}
+    </div>
+  )
 }
+
 export default App

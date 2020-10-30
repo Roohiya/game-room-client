@@ -76,9 +76,14 @@ export const OverlayInput = styled.input`
   padding: 0 10px;
 `
 
-export const StartGame = styled.button`
+export const Play = styled.button`
   width: 100px;
   height: 50px;
   background-color: #ff000;
   margin: 10px 0 0 auto;
+`
+
+export const Error = styled.div`
+  font-size: 12px;
+  color: red;
 `

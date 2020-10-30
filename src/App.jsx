@@ -13,21 +13,33 @@ import {
   JoinGameLabel,
   JoinGameDetails,
   OverlayInput,
-  StartGame,
+  Play,
   GameRoodID,
+  Error,
 } from './assets/styles'
 import socket from './webSocket/socket'
 
 const App = () => {
   const [visibility, setVisibility] = useState(true)
+  const [playerOneNameLocal, setPlayerOneNameLocal] = useState('')
+  const [playerTwoNameLocal, setPlayerTwoNameLocal] = useState('')
   const [playerOneName, setPlayerOneName] = useState('')
   const [playerTwoName, setPlayerTwoName] = useState('')
-  const [room, createGameRoom] = useState('')
+  const [roomId, setGameRoomId] = useState('')
+  const [playerTwoRoomId, setPlayerTwoRoomId] = useState('')
+  const [roomIdError, setRoomIdError] = useState(false)
 
   useEffect(() => {
-    if (room) initiateSocket(room)
-
     socket.connectSocket()
+
+    socket.onCreateGame(setGameRoomId, setPlayerOneName)
+    socket.onJoinGame(
+      setGameRoomId,
+      setPlayerOneName,
+      setPlayerTwoName,
+      setVisibility,
+      setRoomIdError
+    )
   }, [])
 
   return (
@@ -44,51 +56,64 @@ const App = () => {
       <Title> Tic Tac Toe </Title>
       <Grid />
       <Status>
-        Hello {playerOneName}! Waiting for another player to join the room...
+        <div>
+          Game Room ID: {roomId} <br />
+          {playerOneName} and {playerTwoName}, you can start the game!
+        </div>
       </Status>
       {visibility && (
         <Overlay>
           <GameInput>
             <GameDetails>
               <CreateGame>
-                <CreateGameDetails>
-                  <CreateGameLabel> Start a new Game! </CreateGameLabel>
-                  <p>Name: </p>
-                  <OverlayInput
-                    onInput={(e) => setPlayerOneName(e.target.value)}
-                  />
-                  <StartGame
-                    onClick={() => {
-                      socket.createGame(playerOneName)
-
-                      setVisibility(false)
-                    }}
-                  >
-                    Start Game
-                  </StartGame>
-                </CreateGameDetails>
+                {roomId ? (
+                  <div>
+                    Hello {playerOneNameLocal}! Waiting for another player to
+                    join the room... Please use {roomId} to invite another
+                    player!
+                  </div>
+                ) : (
+                  <CreateGameDetails>
+                    <CreateGameLabel> Start a new Game! </CreateGameLabel>
+                    <p>Name: </p>
+                    <OverlayInput
+                      onInput={(e) => setPlayerOneNameLocal(e.target.value)}
+                    />
+                    <Play
+                      onClick={() => {
+                        socket.createGame(playerOneNameLocal)
+                      }}
+                    >
+                      Start Game
+                    </Play>
+                  </CreateGameDetails>
+                )}
               </CreateGame>
               <JoinGame>
                 <JoinGameDetails>
                   <JoinGameLabel> Join a Game!</JoinGameLabel>
                   <p>Name: </p>
                   <OverlayInput
-                    onInput={(e) => setPlayerOneName(e.target.value)}
+                    onInput={(e) => setPlayerTwoNameLocal(e.target.value)}
                   />
                   <p>Room ID: </p>
                   <OverlayInput
-                    onInput={(e) => setPlayerOneName(e.target.value)}
+                    onInput={(e) => setPlayerTwoRoomId(e.target.value)}
                   />
                 </JoinGameDetails>
-                <StartGame
+                {roomIdError && (
+                  <Error>
+                    Room is full or room ID is incorrect. Please try again.
+                  </Error>
+                )}
+                <Play
                   onClick={() => {
-                    socket.createGame(playerOneName)
-
-                    setVisibility(false)
+                    // send player 1 details to server
+                    socket.joinGame(playerTwoNameLocal, playerTwoRoomId)
                   }}
                 >
                   Join Game
-                </StartGame>
+                </Play>
               </JoinGame>
             </GameDetails>
           </GameInput>

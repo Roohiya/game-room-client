@@ -2,6 +2,7 @@ import socketIOClient from 'socket.io-client'
 let socket
 
 const ENDPOINT = 'http://127.0.0.1:4242'
+
 const connectSocket = () => {
   socket = socketIOClient(ENDPOINT)
   console.log('Connecting socket to server...')
@@ -16,24 +17,36 @@ const createGame = (playerOneName) => {
   if (socket) socket.emit('createGame', { playerOneName })
 }
 
-const joinGame = (playerTwoName, roomId) => {
-  if (socket) socket.emit('joinGame', { playerTwoName, roomId })
-}
-
-const onJoinGame = (dispatch, setGameStatus) => {
+const onCreateGame = (setRoom, setName) => {
   if (socket) {
-    socket.on('StartGame', (data) => {
-      console.log('data', data)
-      dispatch(setGameStatus(data.startGame))
+    socket.on('newGame', (data) => {
+      setRoom(data.room)
+      setName(data.playerOne)
     })
   }
 }
 
-const onCreateGame = (dispatch, setRoomId) => {
+const joinGame = (playerTwoName, roomId) => {
+  if (socket) socket.emit('joinGame', { playerTwoName, roomId })
+}
+
+const onJoinGame = (
+  setRoom,
+  setNameOne,
+  setNameTwo,
+  setVisibility,
+  setRoomIdError
+) => {
   if (socket) {
-    socket.on('roomID', (data) => {
-      console.log('data', data)
-      dispatch(setRoomId(data.roomId))
+    socket.on('connectToRoom', (data) => {
+      if (data.startGame) {
+        setRoom(data.room)
+        setNameOne(data.playerOne)
+        setNameTwo(data.playerTwo)
+        setVisibility(false)
+      } else {
+        setRoomIdError(true)
+      }
     })
   }
 }
@@ -44,5 +57,5 @@ export default {
   createGame,
   onCreateGame,
   joinGame,
-  onJoinGame
+  onJoinGame,
 }

@@ -10,7 +10,7 @@ export const Status = styled.label`
   color: #000000;
 `
 
-export const Overlay = styled.div`
+export const OverlayWrapper = styled.div`
   position: fixed;
   width: 100%;
   height: 100%;
@@ -40,7 +40,7 @@ export const GameDetails = styled.div`
   height: 100%;
 `
 
-export const CreateGame = styled.div`
+export const CreateGameWrapper = styled.div`
   display: flex;
   flex-direction: column;
 `
@@ -55,7 +55,7 @@ export const CreateGameDetails = styled.div`
   flex-direction: column;
 `
 
-export const JoinGame = styled.div`
+export const JoinGameWrapper = styled.div`
   display: flex;
   flex-direction: column;
 `

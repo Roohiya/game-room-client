@@ -1,15 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { createStore, compose } from 'redux'
-import rootReducer from './store/reducers'
-import { Provider } from 'react-redux'
 import App from './App'
+import { AppContextProvider } from './context/AppContext'
 
-const store = createStore(
-  rootReducer,
-  compose(
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-  )
+ReactDOM.render(
+  <AppContextProvider>
+    <App />
+  </AppContextProvider>,
+  document.getElementById('app')
 )
-
-ReactDOM.render(<Provider store={store}><App /></Provider>, document.getElementById('app'))
